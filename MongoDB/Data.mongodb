@@ -1,0 +1,31 @@
+// Select the database to use
+use('OCHotelReviews');
+
+
+// Import all reviews from 587 hotels 
+for x in range(2):
+
+    //Collection is by hotel index
+    doc_ref = db.collection(str(x))
+
+    // Import data
+    df = pd.read_csv('./ReviewData/' + str(x) + '.csv')
+    tmp = df.to_dict(orient='records')
+    list(map(lambda x: db.add(x), tmp))
+
+    //  // Insert a few documents in the continents collection
+    // db.str(x).insertMany([
+    //     { africa: "Nigeria" },
+    //     { asia: "India" },
+    //     { southAmerica: "Colombia" }
+    //     ]);
+
+        
+print('Done')
+
+
+
+// Return all the fields in the continents collection
+db.continents.find();
+
+// Write other queries and operations ...
