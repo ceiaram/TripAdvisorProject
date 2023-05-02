@@ -1,8 +1,3 @@
-# can be answered with regression of the individual consumer review --- 
-# IV = the number of mentions of the indicative keywords of an online review, plus start rating, number of words, etc.
-#  (see some variable used in my other paper attached). DV = helpfulness votes an online review received. 
-#  (we can also use the mentions of sustainability keywords to predict “value” besides helpfulness votes)
-
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -15,7 +10,8 @@ import matplotlib.pyplot as plt
 df = pd.read_excel('linear_regression_data.xlsx')
 
 # Split the data into training and testing sets
-X = df[['Customer Rating', 'Number of Words in Review', 'Number of Sentences in Review', 'Manager Response', 'Sustainabilty Score']] # independent variables
+X = df[['Customer Rating', 'Number of Words in Review', 'Number of Sentences in Review', 'Manager Response', 'Sustainabilty Score', 
+        'Contributions']] # independent variables
 y = df['Helpful Vote'] # dependent variable
 # test_size=0.3 means that 30% of the data will be used for testing and the remaining 70% will be used for training.
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
@@ -38,6 +34,7 @@ print('R-squared:', r2)
 
 # Identify the significant predictors
 coefficients = pd.DataFrame(model.coef_, X.columns, columns=['Coefficient'])
+print('COEFF', coefficients)
 significant_predictors = coefficients[coefficients['Coefficient'] != 0]
 print(significant_predictors)
 
@@ -45,21 +42,6 @@ print(significant_predictors)
 for name, coef in zip(X.columns, model.coef_):
     print(f'{name}: {coef:.2f}')
 
-# Plot the actual vs. predicted values
-plt.scatter(y_test, y_pred)
-plt.plot(y_test, y_test, 'r-')
-plt.xlabel('Actual Helpful Votes')
-plt.ylabel('Predicted Helpful Votes')
-plt.title('Linear Regression Model')
-plt.show()
-# Save graph as .png
-plt.savefig('regression_plot.png')
-
-# # Make predictions on new data
-# new_data = pd.DataFrame({'Customer Rating': [1, 2, 3], 'Number of Words in Review': [4, 5, 6], 'Number of Sentences in Review': [7, 8, 9], 
-#                          'Manager Response': [10, 11, 12], 'Sustainabilty Score': [13, 14, 15]})
-# predictions = model.predict(new_data)
-# print(predictions)
 
 
 # Create a new Excel file
@@ -76,9 +58,35 @@ for i, (name, coef) in enumerate(zip(X.columns, model.coef_)):
     worksheet.write(i+1, 1, coef)
     worksheet.write(i+1, 2, significance)
 
-worksheet.write('A7', 'MSE')
-worksheet.write('B7', mse)
-worksheet.write('A8', 'R-squared')
-worksheet.write('B8', r2)
+worksheet.write('A8', 'MSE')
+worksheet.write('B8', mse)
+worksheet.write('A9', 'R-squared')
+worksheet.write('B9', r2)
 
 workbook.close()
+
+
+# Plot the actual vs. predicted values
+plt.scatter(y_test, y_pred)
+plt.plot(y_test, y_test, 'r-')
+plt.xlabel('Actual Helpful Votes')
+plt.ylabel('Predicted Helpful Votes')
+plt.title('Linear Regression Model')
+
+# add text to the plot
+plt.text(50, 200, f'MSE = {mse:.2f}\nR-squared = {r2:.2f}', fontsize=12)
+# add legend to the plot
+plt.legend(['Predicted Values', 'Actual Values'], loc='upper left')
+# Save graph as .png
+plt.savefig('regression_plot.png')
+plt.show()
+
+
+# # Make predictions on new data
+# new_data = pd.DataFrame({'Customer Rating': [1, 2, 3], 'Number of Words in Review': [4, 5, 6], 'Number of Sentences in Review': [7, 8, 9], 
+#                          'Manager Response': [10, 11, 12], 'Sustainabilty Score': [13, 14, 15]})
+# predictions = model.predict(new_data)
+# print(predictions)
+
+
+

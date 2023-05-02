@@ -8,8 +8,8 @@ import re
 import numpy as np
 import nltk
 
-# download the punkt tokenizer if it's not already installed
-nltk.download('punkt')
+# # download the punkt tokenizer if it's not already installed
+# nltk.download('punkt')
 
 
 # Create a new workbook
@@ -53,22 +53,21 @@ def update_excel(data_dict, worksheet, skip_columns_after=None):
                     col_index += 1
 
         # Check if there are any invalid XML elements in the workbook
-        with open("data.xlsx", "rb") as f:
+        with open("linear_regression_data.xlsx", "rb") as f:
             try:
                 etree.parse(f)
             except etree.XMLSyntaxError as e:
                 print(f"\nInvalid XML element found in workbook: {e.args[0]}")
 
         # Save the workbook
-        workbook.save("data.xlsx")
-
+        workbook.save("linear_regression_data.xlsx")
 
 if __name__ == "__main__":
     # number of words,number of sentences, convert manger response to boolean, convert customer rating to #
-    df = pd.read_excel('data_analysis.xlsx', usecols=['Customer Rating', 'Reviews','Manager Response', 'Sustainabilty Score', 'Helpful Vote'])
+    df = pd.read_excel('data_analysis.xlsx', usecols=['Customer Rating', 'Reviews','Manager Response', 'Sustainabilty Score', 'Helpful Vote', 'Contributions'])
 
-    result = {'Customer Review':[], 'Customer Rating' :[],'Number of Words in Review':[], 'Number of Sentences in Review' :[],'Manager Response':[], 'Sustainabilty Score':[],
-              'Helpful Vote':[]}
+    result = {'Customer Rating' :[],'Number of Words in Review':[], 'Number of Sentences in Review' :[],'Manager Response':[], 'Sustainabilty Score':[],
+              'Helpful Vote':[], 'Contributions':[]}
     
     helpful_votes = []
     manager_responses = []
@@ -100,8 +99,8 @@ if __name__ == "__main__":
         else:
             manager_responses.append(1)
 
-        result['Customer Review'].append(row['Reviews'])
         result['Sustainabilty Score'].append(row['Sustainabilty Score'])
+        result['Contributions'].append(row['Contributions'])
         
     result['Manager Response'] = manager_responses
     result['Helpful Vote'] = helpful_votes
@@ -111,4 +110,6 @@ if __name__ == "__main__":
 
     # display the result DataFrame
     print(result_df)
+    update_excel(result, worksheet, skip_columns_after=['Contributions'])
+
 
