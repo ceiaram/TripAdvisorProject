@@ -168,7 +168,7 @@ class Analysis:
        # Append scores to correct list to be added 
        if str_list_name == "review":
         all_scores.append(score)
-       else:
+       elif str_list_name == "about":
         about_section_scores.append(score)
            
        if printed_matches:
@@ -194,72 +194,141 @@ if __name__ == "__main__":
     dict = { 
         'Hotel Name':[],  'Hotel About Section':[],  'Hotel About Section Keywords':[], 'Hotel About Section Sustainabilty Score' :[],
         'Hotel Rating':[], 'Hotel Class' :[], 'Hotel Price Range' :[], 'Total Number of Reviews':[], 
-        'Hotel Value Score':[], 'Reviews' : [], 'Manager Response':[], 'Enviornmental Keywords' : [] , 'Social Keywords': [], 'Cultural Keywords' : [],
-        'Economic Keywords' : [], 'Policy Keywords' : [], 'Top 5 Common Words':[], 'Labels':[], 'Customer Rating':[], 'Date of Stay':[], 'Helpful Vote':[],
-        'Sustainabilty Score' : [], 'Total Sustainable Keywords Found' : [], 'Hotel Sustainabilty Average':[]
+        'Hotel Value Score':[], 'Reviews' : [], 'Manager Response':[], 'Enviornmental Keywords' : [], 'Environmental Keywords[Environment]' : [] , 'Environmental Keywords[Certificate]' : [],
+        'Environmental Keywords[Green Practices]' : [], 'Environmental Keywords[Sustainable Transportation]' : [],
+        'Social Keywords': [], 'Cultural Keywords' : [],'Economic Keywords' : [], 'Policy Keywords' : [], 'Top 5 Common Words':[], 'Labels':[], 'Customer Rating':[],
+        'Date of Stay':[], 'Helpful Vote':[], 'Sustainabilty Score' : [], 'Total Sustainable Keywords Found' : [], 'Hotel Sustainabilty Average':[]
     }
  
  
-    # Weights are all 1
+    # Weights are all 1 
     # HAVE ALL KEYWORDS LOWERCASE TO FIND SCORES
     environmental_keywords = {
-    'automatic light': 1,  # TWO-WORDED KEYWORDS MUST COME BEFORE ONE-WORDED KEY WORDS THAT ARE FOUND IN THE TWO-WORDED KEYWORDS OTHERWIS IT WON'T PICK UP THE TWO-WORDED KEYWORDS/CCORRECT SCORES 
-    'clean air': 1,
-    'clean environment': 1,
-    'energy sav': 1,
-    'environmental certificat': 1,
-    'environmental concern': 1,
-    'environmental manage': 1,
-    'environmentally friendly': 1,
-    'ev charg': 1,
-    'ev park': 1,
-    'electronic car': 1,
-    'electric car': 1,
-    'iso 14001': 1,
-    'towel reuse': 1,
-    'led light': 1,
-    'leed certificat': 1,
-    'locally grown': 1,
-    'linen reuse': 1,
-    'motion sensor': 1,
-    'green space': 1,
-    'green globe': 1,
-    'green hotel': 1,
-    'green issue': 1,
-    'green lodge': 1,
-    'green practice': 1,
-    'green certificat': 1,
-    'recharge station': 1,
-    'sustainable material': 1,
-    'sustainable land': 1,
-    'sustainable transport': 1,
-    'waste conservat': 1,
-    'water sav': 1,
-    'vehicle charg': 1,
+    'automatic light': 1,   # TWO-WORDED KEYWORDS MUST COME BEFORE ONE-WORDED KEY WORDS THAT ARE FOUND IN THE TWO-WORDED KEYWORDS OTHERWIS IT WON'T PICK UP THE TWO-WORDED KEYWORDS/CCORRECT SCORES 
+    'clean air': 1,  
+    'clean environment': 1, 
+    'energy sav': 1, ##
+    'environmental certificat': 1, 
+    'environmental concern': 1, 
+    'environmental manage': 1, 
+    'environmentally friendly': 1, 
+    'ev charg': 1, 
+    'ev park': 1, 
+    'electronic car': 1, 
+    'electric car': 1, 
+    'iso 14001': 1, 
+    'towel reuse': 1, 
+    'linen reuse' : 1, 
+    'led light': 1, 
+    'leed certificat': 1, 
+    'locally grown': 1, 
+    'motion sensor': 1, 
+    'green space': 1, 
+    'green globe': 1, 
+    'green hotel': 1, 
+    'green issue': 1, 
+    'green lodge': 1, 
+    'green practice': 1, 
+    'green certificat': 1, 
+    'recharge station': 1, 
+    'sustainable material': 1, 
+    'sustainable land': 1, 
+    'sustainable transportation': 1, 
+    'waste conservat': 1, 
+    'water sav': 1, 
+    'vehicle charg': 1, 
     # 'green': 1,
-    'conservat': 1,
-    'ecological ': 1,
-    'eco-friendly': 1,
-    'environment': 1,
+    'conservat': 1, 
+    'ecological ': 1, 
+    'eco-friendly': 1, 
+    # 'environment': 1, 
     # 'reuse': 1,
-    'recycle': 1,
-    'renewable': 1,
-    'solar': 1,
-    'organic': 1,
-    'biodegrad': 1,
-    'biodiversit': 1,
-    'degrad': 1,
-    'hybrid': 1,
-    'nature': 1,
-    'efficient': 1,
-    'vegetarian': 1,
-    'vegan': 1,
-    'healthy': 1,
-    'sustain': 1,  
+    'recycle': 1, 
+    'renewable': 1, 
+    'solar': 1, 
+    'organic': 1, 
+    'biodegrad': 1, 
+    'biodiversit': 1, 
+    'restorat': 1, 
+    'hybrid': 1, 
+    'natur': 1, 
+    'efficient': 1, 
+    'vegetarian': 1, 
+    'vegan': 1, 
+    'healthy': 1, 
+    'sustainability': 1, 
     # 'leed': 1,
-    'non-fuel': 1,
-    'reduce': 1
+    'non-fuel': 1, 
+    'non fuel' : 1, 
+    'reduce': 1 
     }
+
+    environmental_keywords_environment = {
+        'clean air': 1,  
+        'clean environment': 1, 
+        'green space': 1, 
+        'green globe': 1, 
+        'green hotel': 1, 
+        'green issue': 1, 
+        'green lodge': 1, 
+        'green practice': 1, 
+        'sustainable land': 1,
+        'ecological ': 1, 
+        'sustainability': 1,
+    }
+
+    environmental_keywords_certificate = {
+        'environmental certificat': 1,
+        'leed certificat': 1,
+        'green certificat': 1,
+        'iso 14001': 1,
+    }
+
+    environmental_keywords_practices = {
+        'automatic light': 1,
+        'environmental concern': 1, 
+        'environmentally friendly': 1,
+        'environmental manage': 1,
+        'towel reuse': 1, 
+        'led light': 1,
+        'linen reuse' : 1,
+        'locally grown': 1,
+        'energy sav': 1,
+        'motion sensor': 1,
+        'sustainable material': 1,
+        'waste conservat': 1,
+        'water sav': 1,
+        'eco-friendly': 1,
+        'recycle': 1,
+        'renewable': 1,
+        'conservat': 1,
+        'solar': 1,
+        'organic': 1,
+        'biodegrad': 1,
+        'biodiversit': 1,
+        'restorat': 1,
+        'natur': 1,
+        'efficient': 1,
+        'vegetarian': 1,
+        'vegan': 1,
+        'healthy': 1,
+        'reduce': 1
+    }
+
+    environmental_keywords_sustainable_transportation = {
+        'ev charg': 1,
+        'ev park': 1,
+        'electronic car': 1,
+        'electric car': 1,
+        'sustainable transportation': 1,
+        'recharge station': 1,
+        'non fuel' : 1,
+        'vehicle charg': 1,
+        'non-fuel': 1,
+        'hybrid': 1,
+    }
+
+
     social_keywords = {
     'corporate responsibilit': 1,
     'community support': 1,
@@ -291,6 +360,7 @@ if __name__ == "__main__":
     }
 
     economic_keywords = {
+    'economical' : 1,
     'market demand': 1,
     'competitive': 1,
     'advantage': 1,
@@ -387,6 +457,14 @@ if __name__ == "__main__":
 
                 # Find key words in reviews from each category of dictionary
                 enviornmentalResults = Analysis.findKeywords(text, environmental_keywords, "review")
+                # Sub-catergories of enviornmental dict, so keywords don't need to be added 
+                enviornmentalResultsEnvironment = Analysis.findKeywords(text, environmental_keywords_environment, None)
+                enviornmentalResultsCertificate = Analysis.findKeywords(text, environmental_keywords_certificate, None)
+                enviornmentalResultsGreenPractices = Analysis.findKeywords(text, environmental_keywords_practices, None)
+                enviornmentalResultsSustainableTransportation = Analysis.findKeywords(text, environmental_keywords_sustainable_transportation, None)
+  
+
+
                 socialResults = Analysis.findKeywords(text, social_keywords, "review")
                 culturalResults = Analysis.findKeywords(text, cultural_keywords, "review")
                 economicResults = Analysis.findKeywords(text, economic_keywords, "review")
@@ -403,6 +481,11 @@ if __name__ == "__main__":
                 dict['Reviews'].append(summary)
                 dict['Manager Response'].append(manager_response)
                 dict['Enviornmental Keywords'].append(", ".join(enviornmentalResults))
+                dict['Environmental Keywords[Environment]'].append(", ".join(enviornmentalResultsEnvironment))
+                dict['Environmental Keywords[Certificate]'].append(", ".join(enviornmentalResultsCertificate))
+                dict['Environmental Keywords[Green Practices]'].append(", ".join(enviornmentalResultsGreenPractices))
+                dict['Environmental Keywords[Sustainable Transportation]'].append(", ".join(enviornmentalResultsSustainableTransportation))
+
                 dict['Social Keywords'].append(", ".join(socialResults))
                 dict['Cultural Keywords'].append(", ".join(culturalResults))
                 dict['Economic Keywords'].append(", ".join(economicResults))
