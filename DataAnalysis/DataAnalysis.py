@@ -210,6 +210,7 @@ if __name__ == "__main__":
     'environmental certificat': 1,
     'environmental concern': 1,
     'environmental manage': 1,
+    'environmentally friendly': 1,
     'ev charg': 1,
     'ev park': 1,
     'electronic car': 1,
@@ -235,11 +236,12 @@ if __name__ == "__main__":
     'waste conservat': 1,
     'water sav': 1,
     'vehicle charg': 1,
-    'green': 1,
+    # 'green': 1,
     'conservat': 1,
-    'eco': 1,
+    'ecological ': 1,
+    'eco-friendly': 1,
     'environment': 1,
-    'reuse': 1,
+    # 'reuse': 1,
     'recycle': 1,
     'renewable': 1,
     'solar': 1,
@@ -254,8 +256,7 @@ if __name__ == "__main__":
     'vegan': 1,
     'healthy': 1,
     'sustain': 1,  
-    'leed': 1,
-    'certificat': 1,
+    # 'leed': 1,
     'non-fuel': 1,
     'reduce': 1
     }
@@ -265,14 +266,14 @@ if __name__ == "__main__":
     'ethical practice': 1,
     'local employee': 1,
     'local purchase': 1,
-    'local community': 1,
+    'local communit': 1,
     'responsible consumer behavior': 1,
     'responsible customer behavior': 1,
     'social responsibilit': 1,
     'sustainable communit': 1,
-    'communit': 1,
-    'responsibl': 1,
-    'involvement': 1,
+    # 'communit': 1,
+    # 'responsibl': 1,
+    # 'involvement': 1,
     }
 
     cultural_keywords = {
@@ -284,7 +285,8 @@ if __name__ == "__main__":
     'traditional': 1,
     'diversit': 1,
     'equit': 1,
-    'fair': 1,
+    # 'fairly': 1,
+    'fairness' : 1,
     'dei': 1,
     }
 
@@ -294,15 +296,14 @@ if __name__ == "__main__":
     'advantage': 1,
     'innovat': 1,
     'profit': 1,
-    'investment': 1, #Need to check 
+    'invest': 1,
     'value': 1,
-    'renovat': 1
+    # 'renovat': 1
     }
 
     policy_keywords = {
     'corporate social responsibilit': 1,
     'environmental regulation': 1,
-    'incentive program': 1,#Need to check 
     'labor regulat': 1,
     'organizational identit': 1,
     'social responsibilit': 1,
@@ -311,14 +312,14 @@ if __name__ == "__main__":
     'zoning polic': 1,
     'stakeholder': 1,
     'regulation': 1,
-    'policy': 1, #Need to check 
-    'policies': 1, #Need to check 
+    'policy': 1, 
+    'policies': 1,
     'transparen': 1   
     }
 
     # All reviews from 587 hotels (500-587 are good) (0-10)
     # Error at index: 308, 400??403  DoubleTree by Hilton Buena Park
-    for x in range(587):
+    for x in range(169, 170):
         # Find Hotels and Reviews at specific index (0 is the first hotel and first hotel's reviews...
         # ..1 is the second hotel and the second hotel's reviews and so on...)
         my_query = {'Index' : x}
