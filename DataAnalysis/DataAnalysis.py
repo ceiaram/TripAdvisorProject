@@ -389,7 +389,7 @@ if __name__ == "__main__":
 
     # All reviews from 587 hotels (500-587 are good) (0-10)
     # Error at index: 308, 400??403  DoubleTree by Hilton Buena Park
-    for x in range(169, 170):
+    for x in range(169, 180):
         # Find Hotels and Reviews at specific index (0 is the first hotel and first hotel's reviews...
         # ..1 is the second hotel and the second hotel's reviews and so on...)
         my_query = {'Index' : x}
@@ -407,7 +407,7 @@ if __name__ == "__main__":
                 hotel_rating = doc['Hotel Rating']
                 hotel_class = doc['Hotel Class']
                 price_range = doc['Hotel Price Range']
-                total_num_reviews = doc['Total Number of Reviews']
+                # total_num_reviews = doc['Total Number of Reviews']
                 value_score = doc['Hotel Value Score']
                 if doc['Hotel About Section']:
                     about_section = doc['Hotel About Section']
@@ -501,7 +501,7 @@ if __name__ == "__main__":
                 dict['Hotel Rating'].append(hotel_rating)
                 dict['Hotel Class'].append(hotel_class)
                 dict['Hotel Price Range'].append(price_range)
-                dict['Total Number of Reviews'].append(total_num_reviews)
+                # dict['Total Number of Reviews'].append(total_num_reviews)
                 dict['Hotel Value Score'].append(value_score)
                 # if the about section is a string, access its elements
                 if isinstance(about_section, str):
@@ -525,6 +525,7 @@ if __name__ == "__main__":
                 # Clear list for next review analysis
                 all_scores.clear()
 
+                
             # Calculate the average if the list is not empty
             if len(total_hotel_scores) > 0:
                 # Calculate the sum of total hotel scores 
@@ -536,6 +537,13 @@ if __name__ == "__main__":
             else:
                 # set rounded avg in the empty list case
                 rounded_average = 0.0000
+
+            # Total number of reviews found for hotel 
+            total_num_reviews = len(total_hotel_scores)
+            for i in total_hotel_scores:
+                   dict['Total Number of Reviews'].append(total_num_reviews)
+                   print("HEEEEELEL")
+
 
             # Clear list 
             total_hotel_scores.clear()
@@ -552,6 +560,7 @@ if __name__ == "__main__":
         # Print the number of docuements with specific index
         # print(collection_reviews.count_documents(my_query))
         # print(collection_hotels.count_documents(my_query))
+
 
     
 
