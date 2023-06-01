@@ -5,6 +5,7 @@ import spacy
 import re
 import csv
 import openpyxl
+import win32com.client as win32
 from collections import Counter
 # Import the Matcher
 from spacy.matcher import PhraseMatcher
@@ -97,14 +98,15 @@ class Analysis:
                     worksheet.cell(row=i+2, column=col_index).value = value
 
         # Check if there are any invalid XML elements in the workbook
-        with open("my_workbook.xlsx", "rb") as f:
+        with open("my_workbook.csv", "rb") as f:
             try:
                 etree.parse(f)
             except etree.XMLSyntaxError as e:
                 print(f"\nInvalid XML element found in workbook: {e.args[0]}")
 
+       
         # Save the workbook
-        workbook.save("my_workbook.xlsx")
+        workbook.save("my_workbook.csv")
 
 
     def findKeywords(text, keywords, str_list_name):
@@ -389,7 +391,7 @@ if __name__ == "__main__":
 
     # All reviews from 587 hotels (500-587 are good) (0-10)
     # Error at index: 308, 400??403  DoubleTree by Hilton Buena Park
-    for x in range(169, 180):
+    for x in range(587):
         # Find Hotels and Reviews at specific index (0 is the first hotel and first hotel's reviews...
         # ..1 is the second hotel and the second hotel's reviews and so on...)
         my_query = {'Index' : x}
@@ -542,8 +544,6 @@ if __name__ == "__main__":
             total_num_reviews = len(total_hotel_scores)
             for i in total_hotel_scores:
                    dict['Total Number of Reviews'].append(total_num_reviews)
-                   print("HEEEEELEL")
-
 
             # Clear list 
             total_hotel_scores.clear()
