@@ -3,6 +3,7 @@ import openpyxl
 from openpyxl.utils.exceptions import IllegalCharacterError
 from lxml import etree
 from collections import Counter
+from operator import itemgetter
 import itertools 
 import re
 import numpy as np
@@ -42,6 +43,15 @@ class Analysis:
                 current_row_keywords = []
                 if specified_rows.iloc[i]['Enviornmental Keywords'] != 'none':
                     current_row_keywords.append((specified_rows.iloc[i]['Enviornmental Keywords'], 'Environmental'))
+
+                if specified_rows.iloc[i]['Environmental Keywords[Environment]'] != 'none':
+                    current_row_keywords.append((specified_rows.iloc[i]['Environmental Keywords[Environment]'], '[Environment]'))
+                if specified_rows.iloc[i]['Environmental Keywords[Certificate]'] != 'none':
+                    current_row_keywords.append((specified_rows.iloc[i]['Environmental Keywords[Certificate]'], '[Certificate]'))
+                if specified_rows.iloc[i]['Environmental Keywords[Green Practices]'] != 'none':
+                    current_row_keywords.append((specified_rows.iloc[i]['Environmental Keywords[Green Practices]'], '[Green Practices]'))
+                if specified_rows.iloc[i]['Environmental Keywords[Sustainable Transportation]'] != 'none':
+                    current_row_keywords.append((specified_rows.iloc[i]['Environmental Keywords[Sustainable Transportation]'], '[Sustainable Transportation]'))
 
                 if specified_rows.iloc[i]['Social Keywords'] != 'none':
                     current_row_keywords.append((specified_rows.iloc[i]['Social Keywords'], 'Social'))
@@ -160,14 +170,20 @@ class Analysis:
     def get_top_5_keywords_from_hotel(hotelname, hotels_df):
         categories = ['Enviornmental Keywords', 'Social Keywords', 'Cultural Keywords', 'Economic Keywords', 'Policy Keywords']
         results = {}
+        all_keywords = []
+        
         for category in categories:
             keywords = hotels_df[hotels_df['Hotel Name'] == hotelname][category].tolist()
             keywords = [word for word in keywords if word != "none"]
-            word_counts = Counter(keywords)
-            results[category] = [word for word, count in word_counts.most_common(5)]
-
-        return results
-
+            all_keywords.extend(keywords)
+            # word_counts = Counter(keywords)
+            # results[category] = [word for word, count in word_counts.most_common(5)]
+            # top_keywords = word_counts.most_common(5)
+            # results[category] = top_keywords[:5]  # Limit the output to top 5 keywords
+        # Get top 5 keywords from all categories 
+        word_counts = Counter(all_keywords)
+        top_keywords = sorted(word_counts.items(), key=itemgetter(1), reverse=True)[:5]
+        return top_keywords
     
     # Get the total amount of hotels found in each rating category
     def get_total_hotel_in_each_rating(df):
@@ -238,9 +254,13 @@ class Analysis:
     
 if __name__ == "__main__":
     # Create a dictionary with initially with no data
-    research_ques = {'Top 10 Sustainable Hotels':[], 'Sustainability Score':[], 'Total Number of Reviews':[],'All Environmental Keywords Found':[], 'All Social Keywords Found':[],
-                        'All Cultural Keywords Found':[], 'All Economic Keywords Found':[], 'All Policy Keywords Found':[], 'Top 10 Enviornmental Keywords':[], 'Top 10 Social Keywords':[], 
-                        'Top 10 Cultural Keywords':[], 'Top 10 Economic Keywords' :[], 'Top 10 Policy Keywords':[], 
+    research_ques = {'Top 10 Sustainable Hotels':[], 'Hotel About Section Keywords':[] ,'Sustainability Score':[], 'Total Number of Reviews':[],'All Environmental Keywords Found':[], 'All Social Keywords Found':[],
+                        'All Environmental Keywords[Environment]':[], 'All Environmental Keywords[Certificate]':[],
+                        'All Environmental Keywords[Green Practices]':[], 'All Environmental Keywords[Sustainable Transportation]':[],
+                        'All Cultural Keywords Found':[], 'All Economic Keywords Found':[],
+                        'All Policy Keywords Found':[], 'Top 10 Enviornmental Keywords':[], 'Top 10 Environmental Keywords[Environment]':[], 'Top 10 Environmental Keywords[Certificate]':[],
+                        'Top 10 Environmental Keywords[Green Practices]':[], 'Top 10 Environmental Keywords[Sustainable Transportation]':[],
+                        'Top 10 Social Keywords':[], 'Top 10 Cultural Keywords':[], 'Top 10 Economic Keywords' :[], 'Top 10 Policy Keywords':[], 
                         'Top 5 5-star':[],'Top 5 5-star Sustainability Score':[], 'Top 5 5-star Total Number of Reviews':[], 'Top 5 Keywords for 5-star':[],'Top 5 4.5-star':[], 'Top 5 4.5-star Sustainability Score':[], 
                         'Top 5 4.5-star Total Number of Reviews':[],'Top 5 Keywords for 4.5-star':[],'Top 5 4-star':[],'Top 5 4-star Sustainability Score':[], 'Top 5 4-star Total Number of Reviews':[],'Top 5 Keywords for 4-star':[], 
                         'Top 5 3.5-star':[], 'Top 5 3.5-star Sustainability Score':[], 'Top 5 3.5-star Total Number of Reviews':[], 'Top 5 Keywords for 3.5-star':[],'Top 5 3-star':[], 'Top 5 3-star Sustainability Score':[], 'Top 5 3-star Total Number of Reviews':[],
@@ -256,7 +276,9 @@ if __name__ == "__main__":
                         }
 
     # Get top 10 hotels with highest sustainabilty score 
-    df = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Sustainabilty Average', 'Total Number of Reviews', 'Enviornmental Keywords', 
+    df = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name', 'Hotel About Section Keywords','Hotel Sustainabilty Average', 'Total Number of Reviews', 'Enviornmental Keywords', 
+                                                      'Environmental Keywords[Environment]', 'Environmental Keywords[Certificate]', 'Environmental Keywords[Green Practices]',
+                                                      'Environmental Keywords[Sustainable Transportation]',
                                                       'Social Keywords', 'Cultural Keywords','Economic Keywords', 'Policy Keywords'])
     # Filter the data frame based on the condition
     df = df[df['Total Number of Reviews'] > 100]
@@ -264,12 +286,14 @@ if __name__ == "__main__":
     print("Processing...top 10")
     top_10 = Analysis.get_top_10(df, 'Hotel Sustainabilty Average')
     top_10_hotel_names = top_10['Hotel Name'].tolist()
+    top_10_hotel_about_section_keywords = top_10['Hotel About Section Keywords'].tolist()
     top_10_hotel_scores = top_10['Hotel Sustainabilty Average'].tolist()
     top_10_hotel_total_num_reviews = top_10['Total Number of Reviews'].tolist()
 
     # Append top 10 hotels with highest sustainabilty score to dictionary 
-    for hotel_name, hotel_score, hotel_total_review in zip(top_10_hotel_names, top_10_hotel_scores, top_10_hotel_total_num_reviews):
+    for hotel_name, hotel_about_section_keywords, hotel_score, hotel_total_review in zip(top_10_hotel_names, top_10_hotel_about_section_keywords,top_10_hotel_scores, top_10_hotel_total_num_reviews):
         research_ques['Top 10 Sustainable Hotels'].append(hotel_name)
+        research_ques['Hotel About Section Keywords'].append(hotel_about_section_keywords)
         research_ques['Sustainability Score'].append(hotel_score)
         research_ques['Total Number of Reviews'].append(hotel_total_review)
 
@@ -281,6 +305,10 @@ if __name__ == "__main__":
         # print(hotel)
         # Set so results do not contain duplicates before appending to 'research_ques' dict 
         enviornmental = []
+        enviornment = []
+        certificate = []
+        green_practices = []
+        sustainable_transportation = []
         social = []
         cultural = []
         economic = []
@@ -293,6 +321,14 @@ if __name__ == "__main__":
             for k in keywords_list:
                 if category == 'Environmental':
                     enviornmental.append(k)
+                if category == '[Environment]':
+                    enviornment.append(k)
+                if category == '[Certificate]':
+                    certificate.append(k)
+                if category == '[Green Practices]':
+                    green_practices.append(k)
+                if category == '[Sustainable Transportation]':
+                    sustainable_transportation.append(k)
                 if category == 'Social':
                     social.append(k)
                 if category == 'Cultural':
@@ -309,14 +345,26 @@ if __name__ == "__main__":
         cultural_counts = Counter(cultural)
         economic_counts = Counter(economic)
         policy_counts = Counter(policy)
+        enviornment_counts = Counter(enviornment)
+        certificate_counts = Counter(certificate)
+        green_practices_counts = Counter(green_practices)
+        sustainable_transportation_counts = Counter(sustainable_transportation)
         
         # Append count data for each category to corresponding key in dictionary
         research_ques['All Environmental Keywords Found'].append(", ".join([f"{k}: {v}" for k, v in environmental_counts.items()]))
+        research_ques['All Environmental Keywords[Environment]'].append(", ".join([f"{k}: {v}" for k, v in enviornment_counts.items()]))
+        research_ques['All Environmental Keywords[Certificate]'].append(", ".join([f"{k}: {v}" for k, v in certificate_counts.items()]))
+        research_ques['All Environmental Keywords[Green Practices]'].append(", ".join([f"{k}: {v}" for k, v in green_practices_counts.items()]))
+        research_ques['All Environmental Keywords[Sustainable Transportation]'].append(", ".join([f"{k}: {v}" for k, v in sustainable_transportation_counts.items()]))
         research_ques['All Social Keywords Found'].append(", ".join([f"{k}: {v}" for k, v in social_counts.items()]))
         research_ques['All Cultural Keywords Found'].append(", ".join([f"{k}: {v}" for k, v in cultural_counts.items()]))
         research_ques['All Economic Keywords Found'].append(", ".join([f"{k}: {v}" for k, v in economic_counts.items()]))
         research_ques['All Policy Keywords Found'].append(", ".join([f"{k}: {v}" for k, v in policy_counts.items()]))
         enviornmental.clear()
+        enviornment.clear()
+        certificate.clear()
+        green_practices.clear()
+        sustainable_transportation.clear()
         social.clear()
         cultural.clear()
         economic.clear()
@@ -325,10 +373,22 @@ if __name__ == "__main__":
 
     # Get the top 10 keywords from each category 
     df2 = pd.read_excel('data_analysis.xlsx', usecols=['Enviornmental Keywords', 'Social Keywords', 'Cultural Keywords',
-                                                      'Economic Keywords', 'Policy Keywords'])
+                                                      'Economic Keywords','Environmental Keywords[Environment]', 'Environmental Keywords[Certificate]', 'Environmental Keywords[Green Practices]',
+                                                      'Environmental Keywords[Sustainable Transportation]', 'Policy Keywords'])
     print("Processing...top enviornmental keywords")
     top_10_enviornmental = Analysis.get_top_10_keywords(df2,'Enviornmental Keywords')
     top_10_enviornmental_list = [str(item) for item in top_10_enviornmental]  # convert tuple to list of strings
+
+    print("Processing...top enviornmental keywords subcatergories")
+    top_10_enviornment = Analysis.get_top_10_keywords(df2,'Environmental Keywords[Environment]')
+    top_10_enviornment_list = [str(item) for item in  top_10_enviornment]  # convert tuple to list of strings
+    top_10_certificate = Analysis.get_top_10_keywords(df2,'Environmental Keywords[Certificate]')
+    top_10_certficate_list = [str(item) for item in  top_10_certificate]  # convert tuple to list of strings
+    top_10_green_practices = Analysis.get_top_10_keywords(df2,'Environmental Keywords[Green Practices]')
+    top_10_green_practices_list = [str(item) for item in top_10_green_practices]  # convert tuple to list of strings
+    top_10_sustainable_transportation = Analysis.get_top_10_keywords(df2,'Environmental Keywords[Sustainable Transportation]')
+    top_10_sustainable_transportation_list  = [str(item) for item in top_10_sustainable_transportation]  # convert tuple to list of strings
+
     print("Processing...top social keywords")
     top_10_social = Analysis.get_top_10_keywords(df2,'Social Keywords')
     top_10_social_list = [str(item) for item in top_10_social]  # convert tuple to list of strings
@@ -345,10 +405,14 @@ if __name__ == "__main__":
     print('Writing to dic')
     # Append top 10 keywords from each category to dictionary
     # itertools.zip_longest() function to iterate over all lists, even if they have different lengths, value of "" to fill any missing values.
-    for enviornmental_keywords, social_keywords, cultural_keywords, economic_keywords, policy_keywords in itertools.zip_longest(
-            top_10_enviornmental_list, top_10_social_list, top_10_cultural_list, top_10_economic_list, top_10_policy_list,
+    for enviornmental_keywords, enviornment_keywords, certificate_keywords, green_practices_keywords, sustainable_transportation_keywords, social_keywords, cultural_keywords, economic_keywords, policy_keywords in itertools.zip_longest(
+            top_10_enviornmental_list, top_10_enviornment_list, top_10_certficate_list,  top_10_green_practices_list, top_10_sustainable_transportation_list, top_10_social_list, top_10_cultural_list, top_10_economic_list, top_10_policy_list,
             fillvalue=""):
         research_ques['Top 10 Enviornmental Keywords'].append(enviornmental_keywords)
+        research_ques['Top 10 Environmental Keywords[Environment]'].append(enviornment_keywords)
+        research_ques['Top 10 Environmental Keywords[Certificate]'].append(certificate_keywords)
+        research_ques['Top 10 Environmental Keywords[Green Practices]'].append(green_practices_keywords)
+        research_ques['Top 10 Environmental Keywords[Sustainable Transportation]'].append(sustainable_transportation_keywords)        
         research_ques['Top 10 Social Keywords'].append(social_keywords)
         research_ques['Top 10 Cultural Keywords'].append(cultural_keywords)
         research_ques['Top 10 Economic Keywords'].append(economic_keywords)
@@ -375,10 +439,12 @@ if __name__ == "__main__":
                 research_ques['Top 5 5-star'].append(hotel[0])
                 research_ques['Top 5 5-star Sustainability Score'].append(hotel[1])
                 research_ques['Top 5 5-star Total Number of Reviews'].append(hotel[2])
-
                 top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(hotel[0], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
+                
                 research_ques['Top 5 Keywords for 5-star'].append(", ".join(top_5_keywords_str))
 
             elif rating == '4.5':
@@ -387,179 +453,203 @@ if __name__ == "__main__":
                 research_ques['Top 5 4.5-star Total Number of Reviews'].append(hotel[2])
 
                 top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(hotel[0], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
+                        
                 research_ques['Top 5 Keywords for 4.5-star'].append(", ".join(top_5_keywords_str))
+
             elif rating == '4':
                 research_ques['Top 5 4-star'].append(hotel[0])
                 research_ques['Top 5 4-star Sustainability Score'].append(hotel[1])
                 research_ques['Top 5 4-star Total Number of Reviews'].append(hotel[2])
 
                 top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(hotel[0], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 4-star'].append(", ".join(top_5_keywords_str))
+
             elif rating == '3.5':
                 research_ques['Top 5 3.5-star'].append(hotel[0])
                 research_ques['Top 5 3.5-star Sustainability Score'].append(hotel[1])
                 research_ques['Top 5 3.5-star Total Number of Reviews'].append(hotel[2])
 
                 top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(hotel[0], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
+
                 research_ques['Top 5 Keywords for 3.5-star'].append(", ".join(top_5_keywords_str))
+   
             elif rating == '3':
                 research_ques['Top 5 3-star'].append(hotel[0])
                 research_ques['Top 5 3-star Sustainability Score'].append(hotel[1])
                 research_ques['Top 5 3-star Total Number of Reviews'].append(hotel[2])
 
                 top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(hotel[0], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 3-star'].append(", ".join(top_5_keywords_str))
+   
             elif rating == '2.5':
                 research_ques['Top 5 2.5-star'].append(hotel[0])
                 research_ques['Top 5 2.5-star Sustainability Score'].append(hotel[1])
                 research_ques['Top 5 2.5-star Total Number of Reviews'].append(hotel[2])
 
                 top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(hotel[0], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 2.5 star'].append(", ".join(top_5_keywords_str))
+
             elif rating == '2':
                 research_ques['Top 5 2-star'].append(hotel[0])
                 research_ques['Top 5 2-star Sustainability Score'].append(hotel[1])
                 research_ques['Top 5 2-star Total Number of Reviews'].append(hotel[2])
 
                 top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(hotel[0], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 2-star'].append(", ".join(top_5_keywords_str))
+  
             elif rating == '1.5':
                 research_ques['Top 5 1.5-star'].append(hotel[0])
                 research_ques['Top 5 1.5-star Sustainability Score'].append(hotel[1])
                 research_ques['Top 5 1.5-star Total Number of Reviews'].append(hotel[2])
 
                 top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(hotel[0], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 1.5-star'].append(", ".join(top_5_keywords_str))
+
             elif rating == '1':
                 research_ques['Top 5 1-star'].append(hotel[0])
                 research_ques['Top 5 1-star Sustainability Score'].append(hotel[1])
                 research_ques['Top 5 1-star Total Number of Reviews'].append(hotel[2])
 
                 top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(hotel[0], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 1-star'].append(", ".join(top_5_keywords_str))
-
             print(f'{hotel[0]}: {hotel[1]}')
 
-    df4 = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Price Range', 'Hotel Sustainabilty Average', 'Total Number of Reviews'])
-    # Create a data frame without duplicates of hotel name
-    df4= df4.drop_duplicates(subset=['Hotel Name'])
-    # Filter the data frame based on the condition
-    df4 = df4[df4['Total Number of Reviews'] > 100]
+    # df4 = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Price Range', 'Hotel Sustainabilty Average', 'Total Number of Reviews'])
+    # # Create a data frame without duplicates of hotel name
+    # df4= df4.drop_duplicates(subset=['Hotel Name'])
+    # # Filter the data frame based on the condition
+    # df4 = df4[df4['Total Number of Reviews'] > 100]
 
-    print("Finding top 5 hotels in each price range...")
-    # Results of the top 5 hotels in each price range based on 'Hotel Sustainabilty Average'
-    top_5_hotels_by_price_range = Analysis.get_top_5_by_price_range(df4)
-    print(top_5_hotels_by_price_range)
+    # print("Finding top 5 hotels in each price range...")
+    # # Results of the top 5 hotels in each price range based on 'Hotel Sustainabilty Average'
+    # top_5_hotels_by_price_range = Analysis.get_top_5_by_price_range(df4)
+    # print(top_5_hotels_by_price_range)
 
-    total_price_range = Analysis.get_total_price_range(df4)
-    print("TOTAL PRICE RANGE:" ,total_price_range)
+    # total_price_range = Analysis.get_total_price_range(df4)
+    # print("TOTAL PRICE RANGE:" ,total_price_range)
 
     
 
 
 
-    hotels_df = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name', 'Enviornmental Keywords','Social Keywords', 'Cultural Keywords','Economic Keywords', 'Policy Keywords','Total Number of Reviews'])
-    print(hotels_df.columns)
-    # loop through each price range category and add the top 5 hotels to the dictionary
-    for category in top_5_hotels_by_price_range['Price Range Category'].unique():
-        hotels = top_5_hotels_by_price_range[top_5_hotels_by_price_range['Price Range Category'] == category][['Hotel Name', 'Hotel Sustainabilty Average','Total Number of Reviews']]
-        for index, row in hotels.iterrows():
-            if category == 'Below $100':
-                research_ques['Top 5 Below $100'].append(row['Hotel Name'])
-                research_ques['Top 5 Below $100 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
-                research_ques['Top 5 Below $100 Total Number of Reviews'].append(row['Total Number of Reviews'])
+    # hotels_df = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name', 'Enviornmental Keywords','Social Keywords', 'Cultural Keywords','Economic Keywords', 'Policy Keywords','Total Number of Reviews'])
+    # print(hotels_df.columns)
+    # # loop through each price range category and add the top 5 hotels to the dictionary
+    # for category in top_5_hotels_by_price_range['Price Range Category'].unique():
+    #     hotels = top_5_hotels_by_price_range[top_5_hotels_by_price_range['Price Range Category'] == category][['Hotel Name', 'Hotel Sustainabilty Average','Total Number of Reviews']]
+    #     for index, row in hotels.iterrows():
+    #         if category == 'Below $100':
+    #             research_ques['Top 5 Below $100'].append(row['Hotel Name'])
+    #             research_ques['Top 5 Below $100 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
+    #             research_ques['Top 5 Below $100 Total Number of Reviews'].append(row['Total Number of Reviews'])
 
-                top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-                research_ques['Top 5 Keywords for Below $100'].append(", ".join(top_5_keywords_str))
+    #             top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+    #             top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
+    #             top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+    #             research_ques['Top 5 Keywords for Below $100'].append(", ".join(top_5_keywords_str))
 
-            if category == '$100-$200':
-                research_ques['Top 5 $100-$200'].append(row['Hotel Name'])
-                research_ques['Top 5 $100-$200 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
-                research_ques['Top 5 $100-$200 Total Number of Reviews'].append(row['Total Number of Reviews'])
+    #         if category == '$100-$200':
+    #             research_ques['Top 5 $100-$200'].append(row['Hotel Name'])
+    #             research_ques['Top 5 $100-$200 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
+    #             research_ques['Top 5 $100-$200 Total Number of Reviews'].append(row['Total Number of Reviews'])
 
-                top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-                research_ques['Top 5 Keywords for $100-$200'].append(", ".join(top_5_keywords_str))
+    #             top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+    #             top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
+    #             top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+    #             research_ques['Top 5 Keywords for $100-$200'].append(", ".join(top_5_keywords_str))
 
-            if category == '$201-$300':
-                research_ques['Top 5 $201-$300'].append(row['Hotel Name'])
-                research_ques['Top 5 $201-$300 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
-                research_ques['Top 5 $201-$200 Total Number of Reviews'].append(row['Total Number of Reviews'])
+    #         if category == '$201-$300':
+    #             research_ques['Top 5 $201-$300'].append(row['Hotel Name'])
+    #             research_ques['Top 5 $201-$300 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
+    #             research_ques['Top 5 $201-$200 Total Number of Reviews'].append(row['Total Number of Reviews'])
 
-                top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-                research_ques['Top 5 Keywords for $201-$300'].append(", ".join(top_5_keywords_str))
-            if category == '$301-$400':
-                research_ques['Top 5 $301-$400'].append(row['Hotel Name'])
-                research_ques['Top 5 $301-$400 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
-                research_ques['Top 5 $301-$400 Total Number of Reviews'].append(row['Total Number of Reviews'])
+    #             top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+    #             top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
+    #             top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+    #             research_ques['Top 5 Keywords for $201-$300'].append(", ".join(top_5_keywords_str))
+    #         if category == '$301-$400':
+    #             research_ques['Top 5 $301-$400'].append(row['Hotel Name'])
+    #             research_ques['Top 5 $301-$400 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
+    #             research_ques['Top 5 $301-$400 Total Number of Reviews'].append(row['Total Number of Reviews'])
 
-                top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-                research_ques['Top 5 Keywords for $301-$400'].append(", ".join(top_5_keywords_str))
-            if category == 'Above $400':
-                research_ques['Top 5 Above $400'].append(row['Hotel Name'])
-                research_ques['Top 5 Above $400 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
-                research_ques['Top 5 Above $400 Total Number of Reviews'].append(row['Total Number of Reviews'])
+    #             top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+    #             top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
+    #             top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+    #             research_ques['Top 5 Keywords for $301-$400'].append(", ".join(top_5_keywords_str))
+    #         if category == 'Above $400':
+    #             research_ques['Top 5 Above $400'].append(row['Hotel Name'])
+    #             research_ques['Top 5 Above $400 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
+    #             research_ques['Top 5 Above $400 Total Number of Reviews'].append(row['Total Number of Reviews'])
 
-                top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-                top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-                top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-                research_ques['Top 5 Keywords for Above $400'].append(", ".join(top_5_keywords_str))
+    #             top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+    #             top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
+    #             top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+    #             research_ques['Top 5 Keywords for Above $400'].append(", ".join(top_5_keywords_str))
 
 
-    df5 = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Rating', 'Total Number of Reviews'])
-    # Create a data frame without duplicates of hotel name
-    df5 = df5.drop_duplicates(subset=['Hotel Name'])
-    # Get the total number of hotels found in each rating 
-    total_hotel_in_each_rating = Analysis.get_total_hotel_in_each_rating(df5)
-    print(total_hotel_in_each_rating)
-    for rating, total_num_of_hotel in total_hotel_in_each_rating.items():
-        if rating == '5 stars':
-            research_ques['Total Number of Hotels 5-star Rating'].append(total_num_of_hotel)
+    # df5 = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Rating', 'Total Number of Reviews'])
+    # # Create a data frame without duplicates of hotel name
+    # df5 = df5.drop_duplicates(subset=['Hotel Name'])
+    # # Get the total number of hotels found in each rating 
+    # total_hotel_in_each_rating = Analysis.get_total_hotel_in_each_rating(df5)
+    # print(total_hotel_in_each_rating)
+    # for rating, total_num_of_hotel in total_hotel_in_each_rating.items():
+    #     if rating == '5 stars':
+    #         research_ques['Total Number of Hotels 5-star Rating'].append(total_num_of_hotel)
 
-            top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-            top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-            top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-            print
+    #         top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+    #         top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
+    #         top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
+    #         print
 
-        if rating == '4.5 stars':
-            research_ques['Total Number of Hotels 4.5-star Rating'].append(total_num_of_hotel)
-        if rating == '4 stars':
-            research_ques['Total Number of Hotels 4-star Rating'].append(total_num_of_hotel)
-        if rating == '3.5 stars':
-            research_ques['Total Number of Hotels 3.5-star Rating'].append(total_num_of_hotel)
-        if rating == '3 stars':
-            research_ques['Total Number of Hotels 3-star Rating'].append(total_num_of_hotel)
-        if rating == '2.5 stars':
-            research_ques['Total Number of Hotels 2.5-star Rating'].append(total_num_of_hotel)
-        if rating == '2 stars':
-            research_ques['Total Number of Hotels 2-star Rating'].append(total_num_of_hotel)
-        if rating == '1.5 stars':
-            research_ques['Total Number of Hotels 1.5-star Rating'].append(total_num_of_hotel)
-        if rating == '1 star':
-            research_ques['Total Number of Hotels 1-star Rating'].append(total_num_of_hotel)
+    #     if rating == '4.5 stars':
+    #         research_ques['Total Number of Hotels 4.5-star Rating'].append(total_num_of_hotel)
+    #     if rating == '4 stars':
+    #         research_ques['Total Number of Hotels 4-star Rating'].append(total_num_of_hotel)
+    #     if rating == '3.5 stars':
+    #         research_ques['Total Number of Hotels 3.5-star Rating'].append(total_num_of_hotel)
+    #     if rating == '3 stars':
+    #         research_ques['Total Number of Hotels 3-star Rating'].append(total_num_of_hotel)
+    #     if rating == '2.5 stars':
+    #         research_ques['Total Number of Hotels 2.5-star Rating'].append(total_num_of_hotel)
+    #     if rating == '2 stars':
+    #         research_ques['Total Number of Hotels 2-star Rating'].append(total_num_of_hotel)
+    #     if rating == '1.5 stars':
+    #         research_ques['Total Number of Hotels 1.5-star Rating'].append(total_num_of_hotel)
+    #     if rating == '1 star':
+    #         research_ques['Total Number of Hotels 1-star Rating'].append(total_num_of_hotel)
 
 
     
