@@ -10,13 +10,13 @@ import xlsxwriter
 # Load the dataset
 df = pd.read_excel('linear_regression_data.xlsx')
 
-# Winsorize the data to remove extreme outliers
-lower = df.quantile(0.05)
-upper = df.quantile(0.95)
-df = df.apply(lambda x: np.clip(x, lower[x.name], upper[x.name]))
+# # Winsorize the data to remove extreme outliers
+# lower = df.quantile(0.05)
+# upper = df.quantile(0.95)
+# df = df.apply(lambda x: np.clip(x, lower[x.name], upper[x.name]))
 
 # Calculate descriptive statistics
-stats = pd.DataFrame({'Mean': df.mean(), 'Standard Deviation': df.std(), 'Range': df.max()-df.min()})
+stats = pd.DataFrame({'Mean': df.mean(), 'Standard Deviation': df.std(), 'Range': df.min().astype(str) + " - " + df.max().astype(str)})
 print(stats)
 
 
