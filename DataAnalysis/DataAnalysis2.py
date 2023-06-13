@@ -96,8 +96,8 @@ class Analysis:
         results_dict = {}
         # Extract the top 5 hotels for each rating and add them to the dictionary
         for rating in df['Hotel Rating'].unique():
-            hotels = top_5.loc[top_5['Hotel Rating'] == rating][['Hotel Name', 'Hotel Sustainabilty Average', 'Total Number of Reviews']]
-            hotels_list = [(hotel[0], hotel[1], hotel[2]) for hotel in hotels.values]
+            hotels = top_5.loc[top_5['Hotel Rating'] == rating][['Hotel Name', 'Hotel Sustainabilty Average', 'Total Number of Reviews', 'Hotel About Section Keywords']]
+            hotels_list = [(hotel[0], hotel[1], hotel[2], hotel[3]) for hotel in hotels.values]
             results_dict[rating] = hotels_list
         return results_dict
 
@@ -144,7 +144,7 @@ class Analysis:
         price_range_avg = df.groupby('Price Range Category')['Hotel Sustainabilty Average'].mean()
         
         # Get the top 5 hotels by sustainability in each price range category
-        top_5_by_price_range = pd.DataFrame(columns=['Price Range Category', 'Hotel Name', 'Hotel Sustainabilty Average','Total Number of Reviews'])
+        top_5_by_price_range = pd.DataFrame(columns=['Price Range Category', 'Hotel Name', 'Hotel Sustainabilty Average','Total Number of Reviews', 'Hotel About Section Keywords'])
         for category in price_range_avg.index:
             
             # Get the top 5 hotels by sustainability for the current category
@@ -152,7 +152,7 @@ class Analysis:
             # Add the category column to the top 5 DataFrame
             top_5['Price Range Category'] = category
             # Append the top 5 DataFrame to the final DataFrame
-            top_5_by_price_range = top_5_by_price_range.append(top_5[['Price Range Category', 'Hotel Name', 'Hotel Sustainabilty Average','Total Number of Reviews']])
+            top_5_by_price_range = top_5_by_price_range.append(top_5[['Price Range Category', 'Hotel Name', 'Hotel Sustainabilty Average','Total Number of Reviews', 'Hotel About Section Keywords']])
             
         return top_5_by_price_range
     
@@ -261,15 +261,19 @@ if __name__ == "__main__":
                         'All Policy Keywords Found':[], 'Top 10 Enviornmental Keywords':[], 'Top 10 Environmental Keywords[Environment]':[], 'Top 10 Environmental Keywords[Certificate]':[],
                         'Top 10 Environmental Keywords[Green Practices]':[], 'Top 10 Environmental Keywords[Sustainable Transportation]':[],
                         'Top 10 Social Keywords':[], 'Top 10 Cultural Keywords':[], 'Top 10 Economic Keywords' :[], 'Top 10 Policy Keywords':[], 
-                        'Top 5 5-star':[],'Top 5 5-star Sustainability Score':[], 'Top 5 5-star Total Number of Reviews':[], 'Top 5 Keywords for 5-star':[],'Top 5 4.5-star':[], 'Top 5 4.5-star Sustainability Score':[], 
-                        'Top 5 4.5-star Total Number of Reviews':[],'Top 5 Keywords for 4.5-star':[],'Top 5 4-star':[],'Top 5 4-star Sustainability Score':[], 'Top 5 4-star Total Number of Reviews':[],'Top 5 Keywords for 4-star':[], 
-                        'Top 5 3.5-star':[], 'Top 5 3.5-star Sustainability Score':[], 'Top 5 3.5-star Total Number of Reviews':[], 'Top 5 Keywords for 3.5-star':[],'Top 5 3-star':[], 'Top 5 3-star Sustainability Score':[], 'Top 5 3-star Total Number of Reviews':[],
-                        'Top 5 Keywords for 3-star':[], 'Top 5 2.5-star':[], 'Top 5 2.5-star Sustainability Score':[], 'Top 5 2.5-star Total Number of Reviews':[], 'Top 5 Keywords for 2.5 star':[],'Top 5 2-star':[], 'Top 5 2-star Sustainability Score':[],
-                        'Top 5 2-star Total Number of Reviews':[], 'Top 5 Keywords for 2-star':[],'Top 5 1.5-star':[],'Top 5 1.5-star Sustainability Score':[], 'Top 5 1.5-star Total Number of Reviews':[], 'Top 5 Keywords for 1.5-star':[], 'Top 5 1-star':[], 
-                        'Top 5 1-star Sustainability Score':[], 'Top 5 1-star Total Number of Reviews':[],'Top 5 Keywords for 1-star':[],'Top 5 Below $100': [], 'Top 5 Below $100 Sustainability Score':[], 'Top 5 Below $100 Total Number of Reviews':[],'Top 5 Keywords for Below $100':[], 
-                        'Top 5 $100-$200': [], 'Top 5 $100-$200 Sustainability Score': [], 'Top 5 $100-$200 Total Number of Reviews':[], 'Top 5 Keywords for $100-$200':[],'Top 5 $201-$300':[],'Top 5 $201-$300 Sustainability Score':[], 'Top 5 $201-$200 Total Number of Reviews':[], 
-                        'Top 5 Keywords for $201-$300':[],'Top 5 $301-$400':[],'Top 5 $301-$400 Sustainability Score':[], 'Top 5 $301-$400 Total Number of Reviews':[], 'Top 5 Keywords for $301-$400':[],'Top 5 Above $400':[], 'Top 5 Above $400 Sustainability Score':[], 
-                        'Top 5 Above $400 Total Number of Reviews':[],'Top 5 Keywords for Above $400' :[], 'Total Number of Hotels 5-star Rating':[], 
+                        'Top 5 5-star':[],'Top 5 5-star Sustainability Score':[], 'Top 5 5-star Total Number of Reviews':[], 'Top 5 Keywords for 5-star':[], 'Top 5 About Section Keywords for 5-star':[],'Top 5 4.5-star':[], 'Top 5 4.5-star Sustainability Score':[], 
+                        'Top 5 4.5-star Total Number of Reviews':[],'Top 5 Keywords for 4.5-star':[],'Top 5 About Section Keywords for 4.5-star':[], 'Top 5 4-star':[],'Top 5 4-star Sustainability Score':[], 'Top 5 4-star Total Number of Reviews':[],'Top 5 Keywords for 4-star':[], 
+                        'Top 5 About Section Keywords for 4-star':[], 'Top 5 3.5-star':[], 'Top 5 3.5-star Sustainability Score':[], 'Top 5 3.5-star Total Number of Reviews':[], 'Top 5 Keywords for 3.5-star':[], 'Top 5 About Section Keywords for 3.5-star':[],'Top 5 3-star':[], 
+                        'Top 5 3-star Sustainability Score':[], 'Top 5 3-star Total Number of Reviews':[],'Top 5 Keywords for 3-star':[], 'Top 5 About Section Keywords for 3-star':[], 'Top 5 2.5-star':[], 'Top 5 2.5-star Sustainability Score':[], 'Top 5 2.5-star Total Number of Reviews':[], 
+                        'Top 5 Keywords for 2.5 star':[],  'Top 5 About Section Keywords for 2.5 star':[], 'Top 5 2-star':[], 'Top 5 2-star Sustainability Score':[],'Top 5 2-star Total Number of Reviews':[], 'Top 5 Keywords for 2-star':[], 'Top 5 About Section Keywords for 2-star':[],
+                        'Top 5 1.5-star':[],'Top 5 1.5-star Sustainability Score':[], 'Top 5 1.5-star Total Number of Reviews':[], 'Top 5 Keywords for 1.5-star':[], 'Top 5 About Section Keywords for 1.5-star':[], 'Top 5 1-star':[], 'Top 5 1-star Sustainability Score':[], 'Top 5 1-star Total Number of Reviews':[],'Top 5 Keywords for 1-star':[],
+                        'Top 5 About Section Keywords for 1-star':[],
+
+
+                        'Top 5 Below $100': [], 'Top 5 Below $100 Sustainability Score':[], 'Top 5 Below $100 Total Number of Reviews':[],'Top 5 Keywords for Below $100':[], 'Top 5 About Section Keywords for Below $100':[],
+                        'Top 5 $100-$200': [], 'Top 5 $100-$200 Sustainability Score': [], 'Top 5 $100-$200 Total Number of Reviews':[], 'Top 5 Keywords for $100-$200':[], 'Top 5 About Section Keywords for $100-$200':[], 'Top 5 $201-$300':[],'Top 5 $201-$300 Sustainability Score':[], 'Top 5 $201-$200 Total Number of Reviews':[], 
+                        'Top 5 Keywords for $201-$300':[], 'Top 5 About Section Keywords for $201-$300':[], 'Top 5 $301-$400':[],'Top 5 $301-$400 Sustainability Score':[], 'Top 5 $301-$400 Total Number of Reviews':[], 'Top 5 Keywords for $301-$400':[], 'Top 5 About Section Keywords for $301-$400':[], 'Top 5 Above $400':[], 
+                        'Top 5 Above $400 Sustainability Score':[], 'Top 5 Above $400 Total Number of Reviews':[],'Top 5 Keywords for Above $400' :[], 'Top 5 About Section Keywords for Above $400' :[], 'Total Number of Hotels 5-star Rating':[], 
                         'Total Number of Hotels 4.5-star Rating' : [], 'Total Number of Hotels 4-star Rating' :[], 'Total Number of Hotels 3.5-star Rating':[],
                         'Total Number of Hotels 3-star Rating':[], 'Total Number of Hotels 2.5-star Rating':[], 'Total Number of Hotels 2-star Rating':[],
                         'Total Number of Hotels 1.5-star Rating':[], 'Total Number of Hotels 1-star Rating':[], 
@@ -420,7 +424,7 @@ if __name__ == "__main__":
     
     hotels_df = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name', 'Enviornmental Keywords','Social Keywords', 'Cultural Keywords','Economic Keywords', 'Policy Keywords'])
 
-    df3 = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Rating', 'Hotel Sustainabilty Average', 'Total Number of Reviews'])
+    df3 = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Rating', 'Hotel Sustainabilty Average', 'Total Number of Reviews', 'Hotel About Section Keywords'])
     # Create a data frame without duplicates of hotel name
     df3 = df3.drop_duplicates(subset=['Hotel Name'])
     # Filter the data frame based on the condition
@@ -429,6 +433,7 @@ if __name__ == "__main__":
     print("Finding top 5 hotels in each rating...")
     # Results of the top 5 hotels in each rating based on 'Hotel Sustainabilty Average'
     results_dict = Analysis.get_top_5_stars(df3)
+    print(results_dict)
 
     # Append top 5 hotels from each rating category to dictionary
     for rating, hotels in results_dict.items():
@@ -446,6 +451,7 @@ if __name__ == "__main__":
                     top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 
                 research_ques['Top 5 Keywords for 5-star'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for 5-star'].append(hotel[3])
 
             elif rating == '4.5':
                 research_ques['Top 5 4.5-star'].append(hotel[0])
@@ -459,6 +465,7 @@ if __name__ == "__main__":
                     top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                         
                 research_ques['Top 5 Keywords for 4.5-star'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for 4.5-star'].append(hotel[3])
 
             elif rating == '4':
                 research_ques['Top 5 4-star'].append(hotel[0])
@@ -471,6 +478,7 @@ if __name__ == "__main__":
                     print(f"Keyword: {keyword}, Frequency: {frequency}")
                     top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 4-star'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for 4-star'].append(hotel[3])
 
             elif rating == '3.5':
                 research_ques['Top 5 3.5-star'].append(hotel[0])
@@ -484,6 +492,7 @@ if __name__ == "__main__":
                     top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
 
                 research_ques['Top 5 Keywords for 3.5-star'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for 3.5-star'].append(hotel[3])
    
             elif rating == '3':
                 research_ques['Top 5 3-star'].append(hotel[0])
@@ -496,6 +505,7 @@ if __name__ == "__main__":
                     print(f"Keyword: {keyword}, Frequency: {frequency}")
                     top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 3-star'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for 3-star'].append(hotel[3])
    
             elif rating == '2.5':
                 research_ques['Top 5 2.5-star'].append(hotel[0])
@@ -508,6 +518,7 @@ if __name__ == "__main__":
                     print(f"Keyword: {keyword}, Frequency: {frequency}")
                     top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 2.5 star'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for 2.5 star'].append(hotel[3])
 
             elif rating == '2':
                 research_ques['Top 5 2-star'].append(hotel[0])
@@ -520,6 +531,7 @@ if __name__ == "__main__":
                     print(f"Keyword: {keyword}, Frequency: {frequency}")
                     top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 2-star'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for 2-star'].append(hotel[3])
   
             elif rating == '1.5':
                 research_ques['Top 5 1.5-star'].append(hotel[0])
@@ -532,6 +544,7 @@ if __name__ == "__main__":
                     print(f"Keyword: {keyword}, Frequency: {frequency}")
                     top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 1.5-star'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for 1.5-star'].append(hotel[3])
 
             elif rating == '1':
                 research_ques['Top 5 1-star'].append(hotel[0])
@@ -544,123 +557,128 @@ if __name__ == "__main__":
                     print(f"Keyword: {keyword}, Frequency: {frequency}")
                     top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
                 research_ques['Top 5 Keywords for 1-star'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for 1-star'].append(hotel[3])
             print(f'{hotel[0]}: {hotel[1]}')
 
-    # df4 = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Price Range', 'Hotel Sustainabilty Average', 'Total Number of Reviews'])
-    # # Create a data frame without duplicates of hotel name
-    # df4= df4.drop_duplicates(subset=['Hotel Name'])
-    # # Filter the data frame based on the condition
-    # df4 = df4[df4['Total Number of Reviews'] > 100]
+    df4 = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Price Range', 'Hotel Sustainabilty Average', 'Total Number of Reviews', 'Hotel About Section Keywords'])
+    # Create a data frame without duplicates of hotel name
+    df4= df4.drop_duplicates(subset=['Hotel Name'])
+    # Filter the data frame based on the condition
+    df4 = df4[df4['Total Number of Reviews'] > 100]
 
-    # print("Finding top 5 hotels in each price range...")
-    # # Results of the top 5 hotels in each price range based on 'Hotel Sustainabilty Average'
-    # top_5_hotels_by_price_range = Analysis.get_top_5_by_price_range(df4)
-    # print(top_5_hotels_by_price_range)
+    print("Finding top 5 hotels in each price range...")
+    # Results of the top 5 hotels in each price range based on 'Hotel Sustainabilty Average'
+    top_5_hotels_by_price_range = Analysis.get_top_5_by_price_range(df4)
+    print(top_5_hotels_by_price_range)
 
-    # total_price_range = Analysis.get_total_price_range(df4)
-    # print("TOTAL PRICE RANGE:" ,total_price_range)
+    total_price_range = Analysis.get_total_price_range(df4)
+    print("TOTAL PRICE RANGE:" ,total_price_range)
+
+    hotels_df = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name', 'Enviornmental Keywords','Social Keywords', 'Cultural Keywords','Economic Keywords', 'Policy Keywords','Total Number of Reviews', 'Hotel About Section Keywords'])
+    print(hotels_df.columns)
+    # loop through each price range category and add the top 5 hotels to the dictionary
+    for category in top_5_hotels_by_price_range['Price Range Category'].unique():
+        hotels = top_5_hotels_by_price_range[top_5_hotels_by_price_range['Price Range Category'] == category][['Hotel Name', 'Hotel Sustainabilty Average','Total Number of Reviews', 'Hotel About Section Keywords']]
+        for index, row in hotels.iterrows():
+            if category == 'Below $100':
+                research_ques['Top 5 Below $100'].append(row['Hotel Name'])
+                research_ques['Top 5 Below $100 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
+                research_ques['Top 5 Below $100 Total Number of Reviews'].append(row['Total Number of Reviews'])
+
+                top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
+                research_ques['Top 5 Keywords for Below $100'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for Below $100'].append(row['Hotel About Section Keywords'])
+
+            if category == '$100-$200':
+                research_ques['Top 5 $100-$200'].append(row['Hotel Name'])
+                research_ques['Top 5 $100-$200 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
+                research_ques['Top 5 $100-$200 Total Number of Reviews'].append(row['Total Number of Reviews'])
+
+                top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
+                research_ques['Top 5 Keywords for $100-$200'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for $100-$200'].append(row['Hotel About Section Keywords'])
+
+            if category == '$201-$300':
+                research_ques['Top 5 $201-$300'].append(row['Hotel Name'])
+                research_ques['Top 5 $201-$300 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
+                research_ques['Top 5 $201-$200 Total Number of Reviews'].append(row['Total Number of Reviews'])
+
+                top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
+                research_ques['Top 5 Keywords for $201-$300'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for $201-$300'].append(row['Hotel About Section Keywords'])
+
+            if category == '$301-$400':
+                research_ques['Top 5 $301-$400'].append(row['Hotel Name'])
+                research_ques['Top 5 $301-$400 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
+                research_ques['Top 5 $301-$400 Total Number of Reviews'].append(row['Total Number of Reviews'])
+
+                top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
+                research_ques['Top 5 Keywords for $301-$400'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for $301-$400'].append(row['Hotel About Section Keywords'])
+
+            if category == 'Above $400':
+                research_ques['Top 5 Above $400'].append(row['Hotel Name'])
+                research_ques['Top 5 Above $400 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
+                research_ques['Top 5 Above $400 Total Number of Reviews'].append(row['Total Number of Reviews'])
+
+                top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
+                top_5_keywords_str = []
+                for keyword, frequency in top_5_keywords_from_hotel:
+                    print(f"Keyword: {keyword}, Frequency: {frequency}")
+                    top_5_keywords_str.append(keyword + " (" + str(frequency) + ")")
+                research_ques['Top 5 Keywords for Above $400'].append(", ".join(top_5_keywords_str))
+                research_ques['Top 5 About Section Keywords for Above $400'].append(row['Hotel About Section Keywords'])
+
+
+    df5 = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Rating', 'Total Number of Reviews'])
+    # Create a data frame without duplicates of hotel name
+    df5 = df5.drop_duplicates(subset=['Hotel Name'])
+    # Get the total number of hotels found in each rating 
+    total_hotel_in_each_rating = Analysis.get_total_hotel_in_each_rating(df5)
+    print(total_hotel_in_each_rating)
+    for rating, total_num_of_hotel in total_hotel_in_each_rating.items():
+        if rating == '5 stars':
+            research_ques['Total Number of Hotels 5-star Rating'].append(total_num_of_hotel)
+        if rating == '4.5 stars':
+            research_ques['Total Number of Hotels 4.5-star Rating'].append(total_num_of_hotel)
+        if rating == '4 stars':
+            research_ques['Total Number of Hotels 4-star Rating'].append(total_num_of_hotel)
+        if rating == '3.5 stars':
+            research_ques['Total Number of Hotels 3.5-star Rating'].append(total_num_of_hotel)
+        if rating == '3 stars':
+            research_ques['Total Number of Hotels 3-star Rating'].append(total_num_of_hotel)
+        if rating == '2.5 stars':
+            research_ques['Total Number of Hotels 2.5-star Rating'].append(total_num_of_hotel)
+        if rating == '2 stars':
+            research_ques['Total Number of Hotels 2-star Rating'].append(total_num_of_hotel)
+        if rating == '1.5 stars':
+            research_ques['Total Number of Hotels 1.5-star Rating'].append(total_num_of_hotel)
+        if rating == '1 star':
+            research_ques['Total Number of Hotels 1-star Rating'].append(total_num_of_hotel)
+
 
     
-
-
-
-    # hotels_df = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name', 'Enviornmental Keywords','Social Keywords', 'Cultural Keywords','Economic Keywords', 'Policy Keywords','Total Number of Reviews'])
-    # print(hotels_df.columns)
-    # # loop through each price range category and add the top 5 hotels to the dictionary
-    # for category in top_5_hotels_by_price_range['Price Range Category'].unique():
-    #     hotels = top_5_hotels_by_price_range[top_5_hotels_by_price_range['Price Range Category'] == category][['Hotel Name', 'Hotel Sustainabilty Average','Total Number of Reviews']]
-    #     for index, row in hotels.iterrows():
-    #         if category == 'Below $100':
-    #             research_ques['Top 5 Below $100'].append(row['Hotel Name'])
-    #             research_ques['Top 5 Below $100 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
-    #             research_ques['Top 5 Below $100 Total Number of Reviews'].append(row['Total Number of Reviews'])
-
-    #             top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-    #             top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-    #             top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-    #             research_ques['Top 5 Keywords for Below $100'].append(", ".join(top_5_keywords_str))
-
-    #         if category == '$100-$200':
-    #             research_ques['Top 5 $100-$200'].append(row['Hotel Name'])
-    #             research_ques['Top 5 $100-$200 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
-    #             research_ques['Top 5 $100-$200 Total Number of Reviews'].append(row['Total Number of Reviews'])
-
-    #             top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-    #             top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-    #             top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-    #             research_ques['Top 5 Keywords for $100-$200'].append(", ".join(top_5_keywords_str))
-
-    #         if category == '$201-$300':
-    #             research_ques['Top 5 $201-$300'].append(row['Hotel Name'])
-    #             research_ques['Top 5 $201-$300 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
-    #             research_ques['Top 5 $201-$200 Total Number of Reviews'].append(row['Total Number of Reviews'])
-
-    #             top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-    #             top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-    #             top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-    #             research_ques['Top 5 Keywords for $201-$300'].append(", ".join(top_5_keywords_str))
-    #         if category == '$301-$400':
-    #             research_ques['Top 5 $301-$400'].append(row['Hotel Name'])
-    #             research_ques['Top 5 $301-$400 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
-    #             research_ques['Top 5 $301-$400 Total Number of Reviews'].append(row['Total Number of Reviews'])
-
-    #             top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-    #             top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-    #             top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-    #             research_ques['Top 5 Keywords for $301-$400'].append(", ".join(top_5_keywords_str))
-    #         if category == 'Above $400':
-    #             research_ques['Top 5 Above $400'].append(row['Hotel Name'])
-    #             research_ques['Top 5 Above $400 Sustainability Score'].append(row['Hotel Sustainabilty Average'])
-    #             research_ques['Top 5 Above $400 Total Number of Reviews'].append(row['Total Number of Reviews'])
-
-    #             top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-    #             top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-    #             top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-    #             research_ques['Top 5 Keywords for Above $400'].append(", ".join(top_5_keywords_str))
-
-
-    # df5 = pd.read_excel('data_analysis.xlsx', usecols=['Hotel Name','Hotel Rating', 'Total Number of Reviews'])
-    # # Create a data frame without duplicates of hotel name
-    # df5 = df5.drop_duplicates(subset=['Hotel Name'])
-    # # Get the total number of hotels found in each rating 
-    # total_hotel_in_each_rating = Analysis.get_total_hotel_in_each_rating(df5)
-    # print(total_hotel_in_each_rating)
-    # for rating, total_num_of_hotel in total_hotel_in_each_rating.items():
-    #     if rating == '5 stars':
-    #         research_ques['Total Number of Hotels 5-star Rating'].append(total_num_of_hotel)
-
-    #         top_5_keywords_from_hotel = Analysis.get_top_5_keywords_from_hotel(row['Hotel Name'], hotels_df)
-    #         top_5_from_all_categories = Analysis.get_top_5_from_all_categories(top_5_keywords_from_hotel)
-    #         top_5_keywords_str = [f"{kw} ({count})" for kw, count in top_5_from_all_categories]
-    #         print
-
-    #     if rating == '4.5 stars':
-    #         research_ques['Total Number of Hotels 4.5-star Rating'].append(total_num_of_hotel)
-    #     if rating == '4 stars':
-    #         research_ques['Total Number of Hotels 4-star Rating'].append(total_num_of_hotel)
-    #     if rating == '3.5 stars':
-    #         research_ques['Total Number of Hotels 3.5-star Rating'].append(total_num_of_hotel)
-    #     if rating == '3 stars':
-    #         research_ques['Total Number of Hotels 3-star Rating'].append(total_num_of_hotel)
-    #     if rating == '2.5 stars':
-    #         research_ques['Total Number of Hotels 2.5-star Rating'].append(total_num_of_hotel)
-    #     if rating == '2 stars':
-    #         research_ques['Total Number of Hotels 2-star Rating'].append(total_num_of_hotel)
-    #     if rating == '1.5 stars':
-    #         research_ques['Total Number of Hotels 1.5-star Rating'].append(total_num_of_hotel)
-    #     if rating == '1 star':
-    #         research_ques['Total Number of Hotels 1-star Rating'].append(total_num_of_hotel)
-
-
-    
-
-
-  
     # # Update results to excel file
     Analysis.update_excel(research_ques, worksheet, skip_columns_after=['All Policy Keywords Found', 'Top 10 Policy Keywords',
-    'Top 5 Keywords for 5-star', 'Top 5 Keywords for 4.5-star', 'Top 5 Keywords for 4-star', 'Top 5 Keywords for 3.5-star',
-    'Top 5 Keywords for 3-star', 'Top 5 Keywords for 2.5 star', 'Top 5 Keywords for 2-star', 'Top 5 Keywords for 1.5-star', 'Top 5 Keywords for 1-star',
-    'Top 5 Keywords for Below $100', 'Top 5 Keywords for $100-$200', 'Top 5 Keywords for $201-$300', 'Top 5 Keywords for $301-$400', 'Top 5 Keywords for Above $400',
+    'Top 5 About Section Keywords for 5-star', 'Top 5 About Section Keywords for 4.5-star', 'Top 5 About Section Keywords for 4-star', 'Top 5 About Section Keywords for 3.5-star',
+    'Top 5 About Section Keywords for 3-star', 'Top 5 About Section Keywords for 2.5 star', 'Top 5 About Section Keywords for 2-star', 'Top 5 About Section Keywords for 1.5-star', 'Top 5 About Section Keywords for 1-star',
+    'Top 5 About Section Keywords for Below $100', 'Top 5 About Section Keywords for $100-$200', 'Top 5 About Section Keywords for $201-$300', 'Top 5 About Section Keywords for $301-$400', 'Top 5 About Section Keywords for Above $400',
     ])
 
 
