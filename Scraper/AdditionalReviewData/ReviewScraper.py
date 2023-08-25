@@ -724,7 +724,7 @@ def get_review_summary_headings(soup, index):
 
 def get_review_summary(soup, index):
     found = False
-    for review_summary in soup.find_all('span',{'class':'QewHA H4 _a'}):
+    for review_summary in soup.find_all('span',{'class':'QewHA H4 _a'}): 
         if (review_summary.find('span')):
             review_summaries.insert(index, review_summary.find('span').text.strip())
             found = True
