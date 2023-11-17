@@ -15,65 +15,7 @@ workbook = openpyxl.Workbook()
 # Select the active worksheet
 worksheet = workbook.active
 
-# # Connect to database, 24hr timeout
-# client = pymongo.MongoClient("mongodb+srv://ceiaram:Xn704K3WQ0So6s09@tripadvisordb.qw0eojr.mongodb.net/?retryWrites=true&w=majority", socketTimeoutMS=86400000)
-# db = client.test
-
-# # Get database named "OrangeCountyHotels"
-# db = client["OrangeCountyHotels"]
-
-# count_about_section = 0
-# num_words_about_section = []
-# num_of_sentences_about_section = []
-# dict = { 'Enviornmental Keywords' : [],
-#         'Social Keywords': [], 'Cultural Keywords' : [],'Economic Keywords' : [], 'Policy Keywords' : [], }
-
-# # Get collection
-# collection_hotels = db['HotelData']
-# for x in range(587):
-#     my_query = {'Index' : x}
-#     hotel_doc = collection_hotels.find(my_query)
-
-#     for doc in hotel_doc:
-#         if doc['Hotel About Section']:
-#             about_section = doc['Hotel About Section']
-#             if about_section != "none" and isinstance(about_section, str):
-#                 count_about_section = count_about_section + 1
-
-#                 # Get number of words found in about section review 
-#                 num_words = len(about_section.split())
-#                 num_words_about_section.append(int(num_words))
-
-#                 # split the text into sentences using nltk
-#                 sentences = nltk.sent_tokenize(about_section)
-#                 num_of_sentences_about_section.append(len(sentences))
-#             else:
-#                 continue
-    
-
-    
-# # Get the average of words and sentences list 
-# average_num_words_about_section = statistics.mean(num_words_about_section)
-# average_num_of_sentences_about_section = statistics.mean(num_of_sentences_about_section)
-
-# print("Number of hotels that had an about section: " + str(count_about_section))
-# print("Among the " + str(count_about_section) + " self-descriptions, on average, it contains " + str(average_num_words_about_section) 
-#       + "words and " + str(average_num_of_sentences_about_section) + " sentences")
-
-
-# hotel_about_sections_df = pd.read_excel('data_analysis.xlsx', usecols=['Hotel About Section Keywords'])
-# word_list = hotel_about_sections_df.split(',')
-# print(word_list)
-# print("Number of words:", len(word_list))
-
 def findKeywords(text, keywords, str_list_name):
-       # create a regular expression pattern to match the whole word that contains one of the keywords(ex: Disney should find Disneyland and Disney-land and landdisney)
-       pattern2 = re.compile(r'\b(\w*{}[\w]*)\b'.format('|'.join(re.escape(keyword) for keyword in keywords)), re.IGNORECASE)
-
-       # create a regular expression pattern matches any word that starts with one of the keywords and is followed by zero or more word characters
-       # main difference with previous pattern is this pattern does not capture the matched text, re.IGNORECASE is for disregard case sensitivity 
-       pattern3 = re.compile(r'\b(?:{})\w*\b'.format('|'.join(map(re.escape, keywords))), re.IGNORECASE)
-        
        word_variations = []
        #store the two-worded keywords and their respective values
        two_worded_keywords = {}
@@ -95,14 +37,9 @@ def findKeywords(text, keywords, str_list_name):
 
        # search for a keyword in the text from pattern
        match = pattern.findall(text)
-    #    Don't need pattern 2 or 3
-    #    match2 = pattern2.findall(text)
-    #    match3= pattern3.findall(text)
 
        matchesFound = []  
        matchesFound.extend(match)
-    #    matchesFound.extend(match2)
-    #    matchesFound.extend(match3)
 
        # remove duplicates from the list of keyword matches
        matchesFound = list(set(matchesFound))
@@ -364,42 +301,6 @@ policy_keywords = {
     'policies': 1,
     'transparen': 1   
     }
-
-# research_ques = {'Environmental Keywords[Environment]' : [], 'Environmental Keywords[Certificate]':[], 'Environmental Keywords[Green Practices]':[],
-#                  'Environmental Keywords[Sustainable Transportation]' :[], 'Social Keywords':[], 'Cultural Keywords':[], 'Economic Keywords':[],
-#                  'Policy Keywords':[]}
-# df = pd.read_excel('data_analysis.xlsx', usecols=['Hotel About Section'])
-#     # Create a data frame without duplicates of hotel name
-# df= df.drop_duplicates(subset=['Hotel About Section'])
-
-# # Iterate over each row and print its data
-# for index, row in df.iterrows():
-#     print(f"Row {index + 1}:")
-#     for column in df.columns:
-#         data = row[column]
-#         # #Find keywords in hotel about section from each category of dictionary 
-#         # Sub-catergories of enviornmental dict, so keywords don't need to be added 
-#         enviornmentalResultsEnvironment = findKeywords(data, environmental_keywords_environment, None)
-#         research_ques['Environmental Keywords[Environment]'].append(", ".join(enviornmentalResultsEnvironment))
-#         enviornmentalResultsCertificate = findKeywords(data, environmental_keywords_certificate, None)
-#         research_ques['Environmental Keywords[Certificate]'].append(", ".join(enviornmentalResultsCertificate))
-#         enviornmentalResultsGreenPractices = findKeywords(data, environmental_keywords_practices, None)
-#         research_ques['Environmental Keywords[Green Practices]'].append(", ".join(enviornmentalResultsGreenPractices))
-#         enviornmentalResultsSustainableTransportation = findKeywords(data, environmental_keywords_sustainable_transportation, None)
-#         research_ques['Environmental Keywords[Sustainable Transportation]'].append(", ".join(enviornmentalResultsSustainableTransportation))
-#         socialResults = findKeywords(data, social_keywords, None)
-#         research_ques['Social Keywords'].append(", ".join(socialResults))
-#         culturalResults = findKeywords(data, cultural_keywords, None)
-#         research_ques['Cultural Keywords'].append(", ".join(culturalResults))
-#         economicResults = findKeywords(data, economic_keywords, None)
-#         research_ques['Economic Keywords'].append(", ".join(economicResults))
-#         policyResults = findKeywords(data, policy_keywords, None)
-#         research_ques['Policy Keywords'].append(", ".join(policyResults))
-#         print(f"{column}: {data}")
-#     print()  # Add an empty line for separation
-
-
-# update_excel(research_ques, worksheet, skip_columns_after=['Policy Keywords'])
 
 
 def get_top_10_keywords(df, col):
