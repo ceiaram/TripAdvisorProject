@@ -110,13 +110,6 @@ class Analysis:
 
 
     def findKeywords(text, keywords, str_list_name):
-       # create a regular expression pattern to match the whole word that contains one of the keywords(ex: Disney should find Disneyland and Disney-land and landdisney)
-       pattern2 = re.compile(r'\b(\w*{}[\w]*)\b'.format('|'.join(re.escape(keyword) for keyword in keywords)), re.IGNORECASE)
-
-       # create a regular expression pattern matches any word that starts with one of the keywords and is followed by zero or more word characters
-       # main difference with previous pattern is this pattern does not capture the matched text, re.IGNORECASE is for disregard case sensitivity 
-       pattern3 = re.compile(r'\b(?:{})\w*\b'.format('|'.join(map(re.escape, keywords))), re.IGNORECASE)
-        
        word_variations = []
        #store the two-worded keywords and their respective values
        two_worded_keywords = {}
@@ -138,14 +131,8 @@ class Analysis:
 
        # search for a keyword in the text from pattern
        match = pattern.findall(text)
-    #    Don't need pattern 2 or 3
-    #    match2 = pattern2.findall(text)
-    #    match3= pattern3.findall(text)
-
        matchesFound = []  
        matchesFound.extend(match)
-    #    matchesFound.extend(match2)
-    #    matchesFound.extend(match3)
 
        # remove duplicates from the list of keyword matches
        matchesFound = list(set(matchesFound))
